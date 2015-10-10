@@ -12,10 +12,13 @@ from . import files
 def read_json(f):
     return (json.loads(l) for l in f)
 
+def no_extra_args(args):
+    return {}
 
 class Streamer:
 
-    def __init__(self, doc, name, a2b, process_args, file_reader=read_json):
+    def __init__(self, doc, name, a2b, process_args=no_extra_args, 
+                 file_reader=read_json):
         self.doc = doc
         self.logger = logging.getLogger(name)
         self.a2b = a2b
