@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+import io
 from multiprocessing import cpu_count
 
 import docopt
@@ -34,7 +35,7 @@ class Streamer:
         )
 
         if len(args['<input-file>']) == 0:
-            paths = [sys.stdin]
+            paths = [io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')]
         else:
             paths = [files.normalize_path(p) for p in args['<input-file>']]
 
