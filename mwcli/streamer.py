@@ -1,30 +1,47 @@
+import io
 import json
 import logging
 import sys
-import io
 from multiprocessing import cpu_count
 
 import docopt
 import para
+from mwxml import Dump
 
 from . import files
 
 
-def read_json(f):
-    return (json.loads(l) for l in f)
-
-def no_extra_args(args):
-    return {}
-
 class Streamer:
+    @staticmethod
+    def read_json(f):
+        return (json.loads(l) for l in f)
 
-    def __init__(self, doc, name, a2b, process_args=no_extra_args, 
-                 file_reader=read_json):
+    @staticmethod
+    def read_xml(f):
+        return Dump.from_file(f)
+
+    @staticmethod
+    def write_json(doc, f):
+        f.write(json.dumps(doc))
+        f.write("\n")
+
+    @staticmethod
+    def write_line(line, f):
+        f.write(line)
+        f.write("\n")
+
+    @staticmethod
+    def no_extra_args(args):
+        return {}
+
+    def __init__(self, doc, name, a2b, process_args=None,
+                 file_reader=None, line_writer=None):
         self.doc = doc
         self.logger = logging.getLogger(name)
         self.a2b = a2b
-        self.process_args = process_args
-        self.file_reader = file_reader
+        self.process_args = process_args or Streamer.no_extra_args
+        self.file_reader = file_reader or Streamer.read_json
+        self.line_writer = line_writer or Streamer.write_json
 
     def main(self, argv=None):
         args = docopt.docopt(self.doc, argv=argv)
@@ -65,18 +82,16 @@ class Streamer:
             f = files.reader(path)
             input = self.file_reader(f)
 
-            docs = self.a2b(input, verbose=verbose,
-                            **kwargs)
+            outputs = self.a2b(input, verbose=verbose,
+                               **kwargs)
 
-            if output_dir == None:
-                yield from docs
+            if output_dir is None:
+                yield from outputs
             else:
                 new_path = files.output_dir_path(path, output_dir, compression)
                 writer = files.writer(new_path)
-                for doc in docs:
-                    json.dump(doc, writer)
-                    writer.write("\n")
+                for output in outputs:
+                    self.file_writer(output, writer)
 
-        for doc in para.map(process_path, paths, mappers=threads):
-            json.dump(doc, sys.stdout)
-            sys.stdout.write("\n")
+        for output in para.map(process_path, paths, mappers=threads):
+            self.file_writer(output, sys.stdout)

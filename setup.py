@@ -8,6 +8,7 @@ def requirements(fname):
     return [line.strip()
             for line in open(os.path.join(os.path.dirname(__file__), fname))]
 
+
 setup(
     name='mwcli',
     version="0.0.2",
