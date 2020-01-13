@@ -91,7 +91,7 @@ class Streamer:
                 new_path = files.output_dir_path(path, output_dir, compression)
                 writer = files.writer(new_path)
                 for output in outputs:
-                    self.file_writer(output, writer)
+                    self.line_writer(output, writer)
 
         for output in para.map(process_path, paths, mappers=threads):
-            self.file_writer(output, sys.stdout)
+            self.line_writer(output, sys.stdout)
