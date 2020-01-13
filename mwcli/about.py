@@ -2,7 +2,7 @@ __name__ = "mwcli"
 __version__ = "0.0.2"
 __author__ = "Aaron Halfaker"
 __author_email__ = "aaron.halfaker@gmail.com"
-__description__ = "A set of utilities for processing MediaWiki on the command line."
+__description__ = "Utilities for processing MediaWiki on the command line."
 __license__ = "MIT"
 __url__ = "https://github.com/mediawiki-utilities/python-mwcli"
 
