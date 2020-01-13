@@ -166,7 +166,7 @@ class ConcatinatingTextReader(io.TextIOBase):
 
 
 def concat(*stream_items):
-    """
+    r"""
     Performs a streaming concatenation of `str` or `file`.
     :Parameters:
         \*stream_items : `str` | `file`
